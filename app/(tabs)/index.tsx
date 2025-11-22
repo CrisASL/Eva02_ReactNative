@@ -1,21 +1,62 @@
-import React, { useContext } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import { AuthContext } from "../../components/context/auth-context"; // ajusta la ruta si es necesario
+import { useState } from "react";
+import { FlatList, StyleSheet, View } from "react-native";
+import NewTask from "../../components/new-task";
+import TaskItem from "../../components/task-item";
+
+export type Task = {
+  id: string;
+  title: string;
+  imageUri: string | null;
+  completed: boolean;
+  location: { latitude: number; longitude: number } | null;
+};
 
 export default function TabsScreen() {
-  const auth = useContext(AuthContext);
-  if (!auth) throw new Error("AuthContext no encontrado");
+  const [tasks, setTasks] = useState<Task[]>([]);
 
-  const nombreUsuario = auth.email ? auth.email.split("@")[0] : "Usuario";
+  const handleCreateTask = (taskData: {
+    title: string;
+    imageUri: string | null;
+    location: { latitude: number; longitude: number } | null;
+  }) => {
+    const newTask: Task = {
+      id: Date.now().toString(),
+      title: taskData.title,
+      imageUri: taskData.imageUri,
+      location: taskData.location,
+      completed: false,
+    };
+
+    setTasks((prev) => [...prev, newTask]);
+  };
+
+  const toggleTask = (id: string) => {
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, completed: !t.completed } : t
+      )
+    );
+  };
+
+  const deleteTask = (id: string) => {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+  };
 
   return (
     <View style={styles.container}>
-      <ActivityIndicator size="large" color="#007bff" style={styles.spinner} />
-      <Text style={styles.text}>
-        Hola, {nombreUsuario}!{"\n"}
-        Aplicación en desarrollo{"\n"}
-        Atento a próximas actualizaciones 🚀
-      </Text>
+      <NewTask onCreate={handleCreateTask} />
+
+      <FlatList
+        data={tasks}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <TaskItem
+            task={item}
+            onToggle={() => toggleTask(item.id)}
+            onDelete={() => deleteTask(item.id)}
+          />
+        )}
+      />
     </View>
   );
 }
@@ -23,19 +64,7 @@ export default function TabsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f5f5f5",
-    padding: 20,
-  },
-  spinner: {
-    marginBottom: 20,
-  },
-  text: {
-    fontSize: 20,
-    textAlign: "center",
-    color: "#333",
-    fontWeight: "600",
+    padding: 15,
   },
 });
 
