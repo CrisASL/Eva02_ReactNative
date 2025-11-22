@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import { useState } from "react";
@@ -16,6 +17,20 @@ export default function NewTask({ onCreate }: NewTaskProps) {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
+  const saveTask = async (task: any) => {
+    try {
+      const stored = await AsyncStorage.getItem("tasks");
+      const tasks = stored ? JSON.parse(stored) : [];
+
+      tasks.push(task);
+
+      await AsyncStorage.setItem("tasks", JSON.stringify(tasks));
+      console.log("Tarea guardada en AsyncStorage");
+    } catch (err) {
+      console.log("Error guardando tarea:", err);
+    }
+  };
+
   const pickImage = async () => {
     const res = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!res.granted) {
@@ -24,7 +39,8 @@ export default function NewTask({ onCreate }: NewTaskProps) {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
+      allowsEditing: false,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 1,
     });
 
@@ -64,17 +80,19 @@ export default function NewTask({ onCreate }: NewTaskProps) {
     });
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!title.trim()) {
       alert("Debes ingresar un título");
       return;
     }
 
-    onCreate({
-      title,
-      imageUri,
-      location,
-    });
+    const task = { title, imageUri, location };
+
+    // 🔥 Guardar en AsyncStorage
+    await saveTask(task);
+
+    // Mantener compatibilidad con tu componente padre
+    onCreate(task);
 
     // Reset
     setTitle("");
@@ -93,12 +111,10 @@ export default function NewTask({ onCreate }: NewTaskProps) {
         onChangeText={setTitle}
       />
 
-      {/* Seleccionar desde galería */}
       <TouchableOpacity style={styles.button} onPress={pickImage}>
         <Text style={styles.buttonText}>Seleccionar Imagen</Text>
       </TouchableOpacity>
 
-      {/* Tomar foto */}
       <TouchableOpacity style={styles.button} onPress={takePhoto}>
         <Text style={styles.buttonText}>Tomar Foto</Text>
       </TouchableOpacity>
@@ -107,7 +123,6 @@ export default function NewTask({ onCreate }: NewTaskProps) {
         <Image source={{ uri: imageUri }} style={styles.image} />
       )}
 
-      {/* Obtener ubicación */}
       <TouchableOpacity style={styles.button} onPress={getLocation}>
         <Text style={styles.buttonText}>Obtener ubicación</Text>
       </TouchableOpacity>
@@ -118,7 +133,6 @@ export default function NewTask({ onCreate }: NewTaskProps) {
         </Text>
       )}
 
-      {/* Crear tarea */}
       <TouchableOpacity style={styles.buttonPrimary} onPress={handleCreate}>
         <Text style={styles.buttonTextPrimary}>Crear tarea</Text>
       </TouchableOpacity>
