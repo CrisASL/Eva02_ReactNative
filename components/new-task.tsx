@@ -1,7 +1,9 @@
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import { useState } from "react";
-import { Button, Image, StyleSheet, Text, TextInput, View } from "react-native";
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+
+
 
 
 
@@ -68,29 +70,41 @@ export default function NewTask({ onCreate }: NewTaskProps) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Nueva tarea</Text>
+  <View style={styles.container}>
+    <Text style={styles.label}>Nueva tarea</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Título de la tarea"
-        value={title}
-        onChangeText={setTitle}
-      />
+    <TextInput
+      style={styles.input}
+      placeholder="Título de la tarea"
+      value={title}
+      onChangeText={setTitle}
+    />
 
-      <Button title="Seleccionar Imagen" onPress={pickImage} />
-      {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+    {/* Botón Seleccionar imagen */}
+    <TouchableOpacity style={styles.button} onPress={pickImage}>
+      <Text style={styles.buttonText}>Seleccionar Imagen</Text>
+    </TouchableOpacity>
 
-      <Button title="Obtener ubicación" onPress={getLocation} />
-      {location && (
-        <Text style={styles.locationText}>
-          Lat: {location.latitude.toFixed(6)}, Lon: {location.longitude.toFixed(6)}
-        </Text>
-      )}
+    {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
 
-      <Button title="Crear tarea" onPress={handleCreate} />
-    </View>
-  );
+    {/* Botón Obtener ubicación */}
+    <TouchableOpacity style={styles.button} onPress={getLocation}>
+      <Text style={styles.buttonText}>Obtener ubicación</Text>
+    </TouchableOpacity>
+
+    {location && (
+      <Text style={styles.locationText}>
+        Lat: {location.latitude.toFixed(6)}, Lon: {location.longitude.toFixed(6)}
+      </Text>
+    )}
+
+    {/* Botón Crear tarea */}
+    <TouchableOpacity style={styles.buttonPrimary} onPress={handleCreate}>
+      <Text style={styles.buttonTextPrimary}>Crear tarea</Text>
+    </TouchableOpacity>
+
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
@@ -123,4 +137,30 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontStyle: "italic",
   },
+  button: {
+  backgroundColor: "#ddd",
+  paddingVertical: 12,
+  borderRadius: 8,
+  marginVertical: 6,
+  alignItems: "center",
+},
+
+buttonText: {
+  fontSize: 16,
+  fontWeight: "bold",
+},
+
+buttonPrimary: {
+  backgroundColor: "#4a90e2",
+  paddingVertical: 12,
+  borderRadius: 8,
+  marginVertical: 10,
+  alignItems: "center",
+},
+
+buttonTextPrimary: {
+  color: "white",
+  fontSize: 16,
+  fontWeight: "bold",
+},
 });
