@@ -3,10 +3,6 @@ import * as Location from "expo-location";
 import { useState } from "react";
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
-
-
-
-
 interface NewTaskProps {
   onCreate: (task: {
     title: string;
@@ -28,6 +24,23 @@ export default function NewTask({ onCreate }: NewTaskProps) {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
+    }
+  };
+
+  const takePhoto = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      alert("Se requiere permiso para usar la cámara.");
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       quality: 1,
     });
@@ -70,41 +83,47 @@ export default function NewTask({ onCreate }: NewTaskProps) {
   };
 
   return (
-  <View style={styles.container}>
-    <Text style={styles.label}>Nueva tarea</Text>
+    <View style={styles.container}>
+      <Text style={styles.label}>Nueva tarea</Text>
 
-    <TextInput
-      style={styles.input}
-      placeholder="Título de la tarea"
-      value={title}
-      onChangeText={setTitle}
-    />
+      <TextInput
+        style={styles.input}
+        placeholder="Título de la tarea"
+        value={title}
+        onChangeText={setTitle}
+      />
 
-    {/* Botón Seleccionar imagen */}
-    <TouchableOpacity style={styles.button} onPress={pickImage}>
-      <Text style={styles.buttonText}>Seleccionar Imagen</Text>
-    </TouchableOpacity>
+      {/* Seleccionar desde galería */}
+      <TouchableOpacity style={styles.button} onPress={pickImage}>
+        <Text style={styles.buttonText}>Seleccionar Imagen</Text>
+      </TouchableOpacity>
 
-    {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+      {/* Tomar foto */}
+      <TouchableOpacity style={styles.button} onPress={takePhoto}>
+        <Text style={styles.buttonText}>Tomar Foto</Text>
+      </TouchableOpacity>
 
-    {/* Botón Obtener ubicación */}
-    <TouchableOpacity style={styles.button} onPress={getLocation}>
-      <Text style={styles.buttonText}>Obtener ubicación</Text>
-    </TouchableOpacity>
+      {imageUri && (
+        <Image source={{ uri: imageUri }} style={styles.image} />
+      )}
 
-    {location && (
-      <Text style={styles.locationText}>
-        Lat: {location.latitude.toFixed(6)}, Lon: {location.longitude.toFixed(6)}
-      </Text>
-    )}
+      {/* Obtener ubicación */}
+      <TouchableOpacity style={styles.button} onPress={getLocation}>
+        <Text style={styles.buttonText}>Obtener ubicación</Text>
+      </TouchableOpacity>
 
-    {/* Botón Crear tarea */}
-    <TouchableOpacity style={styles.buttonPrimary} onPress={handleCreate}>
-      <Text style={styles.buttonTextPrimary}>Crear tarea</Text>
-    </TouchableOpacity>
+      {location && (
+        <Text style={styles.locationText}>
+          Lat: {location.latitude.toFixed(6)}, Lon: {location.longitude.toFixed(6)}
+        </Text>
+      )}
 
-  </View>
-);
+      {/* Crear tarea */}
+      <TouchableOpacity style={styles.buttonPrimary} onPress={handleCreate}>
+        <Text style={styles.buttonTextPrimary}>Crear tarea</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -138,29 +157,26 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
   button: {
-  backgroundColor: "#ddd",
-  paddingVertical: 12,
-  borderRadius: 8,
-  marginVertical: 6,
-  alignItems: "center",
-},
-
-buttonText: {
-  fontSize: 16,
-  fontWeight: "bold",
-},
-
-buttonPrimary: {
-  backgroundColor: "#4a90e2",
-  paddingVertical: 12,
-  borderRadius: 8,
-  marginVertical: 10,
-  alignItems: "center",
-},
-
-buttonTextPrimary: {
-  color: "white",
-  fontSize: 16,
-  fontWeight: "bold",
-},
+    backgroundColor: "#ddd",
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginVertical: 6,
+    alignItems: "center",
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  buttonPrimary: {
+    backgroundColor: "#4a90e2",
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginVertical: 10,
+    alignItems: "center",
+  },
+  buttonTextPrimary: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });
