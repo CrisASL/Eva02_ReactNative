@@ -1,14 +1,15 @@
 import { useRouter } from "expo-router";
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import {
-    Alert,
-    Pressable,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 import { AuthContext } from "../components/context/auth-context";
+import { LOCAL_USERS } from "../components/context/local-users";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState<string>("");
@@ -31,8 +32,13 @@ const LoginScreen = () => {
       return;
     }
 
-    if (password !== "1234") {
-      Alert.alert("Error", "Contraseña incorrecta");
+    // 🔍 buscar usuario local
+    const userFound = LOCAL_USERS.find(
+      (u) => u.email === email && u.password === password
+    );
+
+    if (!userFound) {
+      Alert.alert("Error", "Credenciales inválidas");
       return;
     }
 
@@ -40,7 +46,7 @@ const LoginScreen = () => {
 
     const nombreUsuario = email.split("@")[0];
     Alert.alert("Inicio de sesión", `Bienvenido, ${nombreUsuario}!`);
-    
+
     router.replace("/(tabs)");
   };
 

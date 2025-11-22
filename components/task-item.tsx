@@ -7,6 +7,7 @@ interface TaskItemProps {
     imageUri: string | null;
     completed: boolean;
     location?: { latitude: number; longitude: number } | null;
+    userEmail: string;
   };
   onToggle: () => void;
   onDelete: () => void;
