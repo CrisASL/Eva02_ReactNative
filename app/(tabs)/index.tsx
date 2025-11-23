@@ -1,59 +1,35 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useContext, useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { AuthContext } from "../../components/context/auth-context";
 import NewTask from "../../components/new-task";
 import TaskItem from "../../components/task-item";
-
-export type Task = {
-  id: string;
-  title: string;
-  imageUri: string | null;
-  completed: boolean;
-  location: { latitude: number; longitude: number } | null;
-  userEmail: string;
-};
+import { getTasks, saveTasks } from "../../utils/storage";
+import { Task } from "../../utils/types";
 
 export default function TabsScreen() {
-  const auth = useContext(AuthContext);           // ✔ hook siempre arriba
-  const userEmail = auth?.email ?? "";            // ✔ userEmail nunca es null
-  const [tasks, setTasks] = useState<Task[]>([]); // ✔ hook arriba también
+  const auth = useContext(AuthContext);
+  const userEmail = auth?.email ?? "";
+  const [tasks, setTasks] = useState<Task[]>([]);
 
-  // 🚀 Cargar tareas del usuario
+  // Cargar tareas del usuario al iniciar sesión
   useEffect(() => {
     const loadTasks = async () => {
-      try {
-        const stored = await AsyncStorage.getItem("tasks");
-        if (stored) {
-          const parsed: Task[] = JSON.parse(stored);
-          const userTasks = parsed.filter((t) => t.userEmail === userEmail);
-          setTasks(userTasks);
-        }
-      } catch (error) {
-        console.log("Error loading tasks", error);
-      }
+      const allTasks = await getTasks(); // todas las tareas
+      const userTasks = allTasks.filter((t) => t.userEmail === userEmail);
+      setTasks(userTasks);
     };
-
     if (userEmail) loadTasks();
   }, [userEmail]);
 
-  // 🚀 Guardar tareas del usuario
+  // Guardar tareas del usuario al modificarlas
   useEffect(() => {
-    const saveTasks = async () => {
-      try {
-        const stored = await AsyncStorage.getItem("tasks");
-        const globalTasks: Task[] = stored ? JSON.parse(stored) : [];
-
-        const filtered = globalTasks.filter((t) => t.userEmail !== userEmail);
-        const merged = [...filtered, ...tasks];
-
-        await AsyncStorage.setItem("tasks", JSON.stringify(merged));
-      } catch (error) {
-        console.log("Error saving tasks", error);
-      }
+    const persistTasks = async () => {
+      const allTasks = await getTasks(); // todas las tareas
+      const otherUsersTasks = allTasks.filter((t) => t.userEmail !== userEmail);
+      const merged = [...otherUsersTasks, ...tasks]; // unir tareas
+      await saveTasks(merged);
     };
-
-    if (userEmail) saveTasks();
+    if (userEmail) persistTasks();
   }, [tasks, userEmail]);
 
   const handleCreateTask = (taskData: {
@@ -67,9 +43,8 @@ export default function TabsScreen() {
       imageUri: taskData.imageUri,
       location: taskData.location,
       completed: false,
-      userEmail,            // ✔ ya no falla (string garantizado)
+      userEmail,
     };
-
     setTasks((prev) => [...prev, newTask]);
   };
 
@@ -83,7 +58,6 @@ export default function TabsScreen() {
     setTasks((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // 🚀 Render condicional SIN romper reglas de hooks
   if (!auth) {
     return (
       <View style={styles.container}>
@@ -125,6 +99,7 @@ const styles = StyleSheet.create({
     padding: 15,
   },
 });
+
 
 
 

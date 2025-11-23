@@ -1,14 +1,7 @@
 import { Button, Image, StyleSheet, Text, View } from "react-native";
-
+import { Task } from "../utils/types";
 interface TaskItemProps {
-  task: {
-    id: string;
-    title: string;
-    imageUri: string | null;
-    completed: boolean;
-    location?: { latitude: number; longitude: number } | null;
-    userEmail: string;
-  };
+  task: Task;
   onToggle: () => void;
   onDelete: () => void;
 }
@@ -69,3 +62,4 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 });
+

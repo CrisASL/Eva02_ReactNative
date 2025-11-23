@@ -1,4 +1,4 @@
-# Welcome to your Expo app 👋
+# Welcome to Eva02 React Native 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
@@ -8,55 +8,52 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 ## Uso de IA
 
-Esta aplicación móvil ha sido desarrollada en React Native y utiliza la API de OpenAI y ChatGPT para generar contenido automáticamente a partir de una entrada del usuario. Se construyó una estructura de aplicación organizada utilizando layouts y navegación con Expo Router. Además, se implementó un sistema de autenticación básico con pantalla de login, validación de correo y contraseña, y manejo de sesión mediante un Contexto global (AuthContext).
+Esta aplicación móvil ha sido desarrollada en React Native y utiliza ChatGPT como asistencia en el desarrollo para generar contenido, corregir errores y optimizar la estructura del código.
 
-## Get started
+La aplicación permite a los usuarios crear y gestionar tareas personales con las siguientes características:
 
-1. Install dependencies
+Título de la tarea
 
-   ```bash
-   npm install
-   ```
+Imagen asociada (cámara o galería)
 
-2. Start the app
+Ubicación opcional (latitud y longitud)
 
-   ```bash
-   npx expo start
-   ```
+Estado de completitud (pendiente o completada)
 
-In the output, you'll find options to open the app in a
+Se implementó persistencia de datos usando AsyncStorage, de modo que cada usuario mantiene sus tareas incluso después de cerrar la sesión. La aplicación identifica a los usuarios mediante correo electrónico y gestiona las tareas de forma individual.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Se construyó una estructura organizada utilizando componentes, layouts, y navegación con Expo Router, además de un sistema de autenticación básico mediante AuthContext.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Funcionalidades principales
 
-## Get a fresh project
+1. Crear tareas:
 
-When you're ready, run:
+   - Ingresar título
 
-```bash
-npm run reset-project
-```
+   - Adjuntar imagen desde cámara o galería
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+   - Guardar ubicación actual (opcional)
 
-## Learn more
+2. Visualizar tareas:
 
-To learn more about developing your project with Expo, look at the following resources:
+   - Listado de tareas por usuario
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+   - Indicador de completitud (✅ o ⬜)
 
-## Join the community
+3. Modificar tareas:
 
-Join our community of developers creating universal apps.
+   - Marcar/completar tareas
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+   - Eliminar tareas  
 
-## Created by Cristian Salas y Fellipe Herrero
+4. Persistencia de datos:
 
-[![Link video Youtube](https://youtube.com/shorts/hifyGEEiTrw?feature=share)
+   - Todas las tareas se almacenan en AsyncStorage
+
+   - Se cargan automáticamente al iniciar sesión    
+
+5. Autenticación básica:
+
+  - Iniciar sesión con correo electrónico
+
+  
