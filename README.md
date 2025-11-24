@@ -4,7 +4,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 ## Created by Cristian Salas y Fellipe Herrero
 
-[![Link video Youtube](https://youtube.com/shorts/hifyGEEiTrw?feature=share)
+[![Link video Youtube] https://www.youtube.com/shorts/t2rrX4XDpmM
 
 ## Uso de IA
 
@@ -54,6 +54,6 @@ Se construyó una estructura organizada utilizando componentes, layouts, y naveg
 
 5. Autenticación básica:
 
-  - Iniciar sesión con correo electrónico
+   - Iniciar sesión con correo electrónico
 
   
